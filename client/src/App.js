@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Container, Row, Col, Button } from 'react-bootstrap'
-import { ClipLoader, PacmanLoader } from 'react-spinners'
+import { ClipLoader } from 'react-spinners'
 
 const App = () => {
   const [clients, setClients] = useState([])
@@ -18,32 +18,29 @@ const App = () => {
     }
   }
 
-  const fetchClients = async () => {
-    try {
-      const getResponse = await axios.get('/clients')
-      const clientList = getResponse.data
-      const clientsWithVoteCounts = await Promise.all(
-        clientList.map(async (client) => {
-          const vote_count = await fetchVoteCount(client.id)
-          return { ...client, vote_count }
-        })
-      )
-
-      const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
-
-      setClients(sortedClients)
-      setPageLoading(false)
-    } catch (error) {
-      console.error('Error fetching clients:', error)
-      setPageLoading(false)
-    }
-  }
-
   useEffect(() => {
-    if (!pageLoading) return
-    if (!clients.length) {
-      fetchClients()
+    const fetchClients = async () => {
+      try {
+        const getResponse = await axios.get('/clients')
+        const clientList = getResponse.data
+        const clientsWithVoteCounts = await Promise.all(
+          clientList.map(async (client) => {
+            const vote_count = await fetchVoteCount(client.id)
+            return { ...client, vote_count }
+          })
+        )
+
+        const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
+
+        setClients(sortedClients)
+        setPageLoading(false)
+      } catch (error) {
+        console.error('Error fetching clients:', error)
+        setPageLoading(false)
+      }
     }
+
+    fetchClients()
   }, [])
 
   const handleVote = async (clientId) => {
