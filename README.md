@@ -76,7 +76,7 @@ Vote for a client by clicking the "Vote" button.
 Observe real-time updates and reordering of the vote counts as users vote.
 
 #### Future Potential Additions
-
+- more css styling
 - front end routing
 - authentication
 - user creation of additional clients
