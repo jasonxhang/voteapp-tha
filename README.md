@@ -1,24 +1,65 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Welcome to VoteApp! This application allows users to vote for different clients and see real time updates of the vote counts. The front end was made with create-react-app and Bootstrap. Ruby on Rails powers the backend API with a PostgreSQL database.
 
-Things you may want to cover:
+I will note that the current implementation would not scale well as we have to make individual calls for each client to use our `GET /votes/:client_id` route. An alternative proposal would be to attach `vote_counts` directly to the user object inside our `GET /clients` which I outlined in the `ClientsController`.
 
-* Ruby version
+## Getting Started
 
-* System dependencies
+#### Prerequisites
 
-* Configuration
+Ensure you have the following installed on your machine:
 
-* Database creation
+- Ruby
+- Ruby on Rails
+- Node.js
+- PostgreSQL
 
-* Database initialization
+#### Installation
 
-* How to run the test suite
+1. Install Ruby and Rails dependencies:
+   `bundle install`
 
-* Services (job queues, cache servers, search engines, etc.)
+2. Install Node.js dependencies:
+   `cd client npm install`
 
-* Deployment instructions
+3. Update `config/database.yml` file to match your PostgreSQL user credentials as needed before creating and seeding the database.
+   `rails db:create rails db:migrate rails db:seed`
 
-* ...
+4. Start the Rails server:
+   `rails server`
+
+5. In a new terminal window, navigate to the `client` directory and start the React app:
+   `cd client npm start`
+
+6. Open web browser and visit `http://localhost:3002` to access the app.
+
+#### Database Schema
+
+The database schema consists of two tables: clients and votes.
+
+- clients:
+
+  - id (integer, primary key)
+  - name (string)
+
+- votes:
+  - id (integer, primary key)
+  - client_id (integer, foreign key)
+  - created_at (datetime)
+
+#### Usage
+
+Browse the list of clients and their vote counts.
+Vote for a client by clicking the "Vote" button.
+Observe real-time updates and reordering of the vote counts as users vote.
+
+#### Future Potential Additions
+
+- front end routing
+- authentication
+- user creation of additional clients
+- separate biography pages for each client
+- websockets
+  - live notifications for votes
+- logging service

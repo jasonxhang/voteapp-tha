@@ -3,16 +3,35 @@ import axios from 'axios'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import { ClipLoader } from 'react-spinners'
 
-function App() {
+const App = () => {
   const [clients, setClients] = useState([])
-  const [voteProcessing, setVoteProcessing] = useState(false)
-  const [clientIdProcess, setClientIdProcess] = useState(null)
+  console.log('clients:', clients)
+  const [voteProcessing, setVoteProcessing] = useState({ clientId: null, inProgress: false })
+
+  const fetchVoteCount = async (clientId) => {
+    try {
+      const response = await axios.get(`/votes/${clientId}`)
+      return response.data.vote_count
+    } catch (error) {
+      console.error('Error fetching vote count:', error)
+      return 0
+    }
+  }
 
   const fetchClients = async () => {
     try {
       const getResponse = await axios.get('/clients')
       const clientList = getResponse.data
-      setClients(clientList)
+      const clientsWithVoteCounts = await Promise.all(
+        clientList.map(async (client) => {
+          const vote_count = await fetchVoteCount(client.id)
+          return { ...client, vote_count }
+        })
+      )
+
+      const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
+
+      setClients(sortedClients)
     } catch (error) {
       console.error('Error fetching clients:', error)
     }
@@ -24,35 +43,46 @@ function App() {
 
   const handleVote = async (clientId) => {
     try {
-      setVoteProcessing(true)
-      setClientIdProcess(clientId)
+      setVoteProcessing({ clientId, inProgress: true })
 
       await axios.post(`/votes/${clientId}`)
-      await fetchClients()
+      const newVoteCount = await fetchVoteCount(clientId)
 
-      setVoteProcessing(false)
-      setClientIdProcess(null)
+      setClients((prevClients) =>
+        prevClients
+          .map((client) =>
+            client.id === clientId ? { ...client, vote_count: newVoteCount } : client
+          )
+          .sort((a, b) => b.vote_count - a.vote_count)
+      )
+
+      setVoteProcessing({ clientId: null, inProgress: false })
     } catch (error) {
       console.error('Error voting:', error)
+      setVoteProcessing({ clientId: null, inProgress: false })
     }
   }
 
   const renderClientRow = (client) => {
+    const { id, name, vote_count } = client
+    const isProcessing = voteProcessing.clientId === id && voteProcessing.inProgress
+
     return (
-      <Row key={client.id} className="mb-3">
+      <Row key={id} className="mb-3">
         <Col xs={4} className="d-flex align-items-center">
-          <div>{client.name}</div>
+          <div>{name}</div>
         </Col>
         <Col xs={4} className="d-flex align-items-center">
-          <div>{client.vote_count}</div>
+          <div>{vote_count}</div>
         </Col>
         <Col xs={4} className="d-flex align-items-center">
           <Button
             style={{ width: '100px', height: '40px' }}
             variant="primary"
-            onClick={() => handleVote(client.id)}
+            onClick={() => handleVote(id)}
+            disabled={isProcessing}
           >
-            {voteProcessing && clientIdProcess === client.id ? (
+            {isProcessing ? (
               <div style={{ width: '100%', height: '80%' }}>
                 <ClipLoader size={25} color={'#36d7b7'} />
               </div>

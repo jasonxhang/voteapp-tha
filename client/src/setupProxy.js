@@ -1,19 +1,19 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware')
 
-module.exports = function(app) {
+module.exports = function (app) {
   app.use(
-    '/clients', // Replace '/api' with '/clients'
+    '/clients',
     createProxyMiddleware({
-      target: 'http://localhost:3000', // Rails server URL
+      target: 'http://localhost:3000',
       changeOrigin: true,
     })
-  );
+  )
 
   app.use(
-    '/votes', // Replace '/api' with '/votes'
+    '/votes',
     createProxyMiddleware({
-      target: 'http://localhost:3000', // Rails server URL
+      target: 'http://localhost:3000',
       changeOrigin: true,
     })
-  );
-};
+  )
+}

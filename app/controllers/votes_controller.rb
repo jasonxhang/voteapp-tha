@@ -5,7 +5,6 @@ class VotesController < ApplicationController
       client = Client.find(params[:client_id])
       vote_count = client.votes.count
 
-      # Log the request
       Rails.logger.info("GET /votes/#{params[:client_id]} - Vote count: #{vote_count}")
 
       render json: { vote_count: vote_count }
@@ -13,7 +12,7 @@ class VotesController < ApplicationController
       render json: { error: 'Client not found' }, status: :not_found
     rescue => e
       Rails.logger.error("Error in GET /votes/#{params[:client_id]}: #{e.message}")
-      render json: { error: 'An error occurred' }, status: :internal_server_error
+      render json: { error: 'An e@rror occurred' }, status: :internal_server_error
     end
   end
 
@@ -25,7 +24,6 @@ class VotesController < ApplicationController
 
       vote_count = client.votes.count
 
-      # Log the vote
       Rails.logger.info("POST /votes/#{params[:client_id]} - Vote added, new count: #{vote_count}")
 
 			render json: {
