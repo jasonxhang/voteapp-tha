@@ -1,6 +1,6 @@
 # README
 
-Welcome to VoteApp! This application allows users to vote for different clients and see real time updates of the vote counts. The front end was made with create-react-app and Bootstrap. Ruby on Rails powers the backend API with a PostgreSQL database.
+Welcome to VoteApp! This application allows users to vote for different clients, in our use case NBA players, and see real time updates of the vote counts. The front end was made with create-react-app and Bootstrap. Ruby on Rails powers the backend API with a PostgreSQL database.
 
 I will note that the current implementation would not scale well as we have to make individual calls for each client to use our `GET /votes/:client_id` route - especially if we want to keep the sorting feature which should be handled on the backend anyway. An alternative proposal would be to attach `vote_counts` directly to the user object inside our `GET /clients` route and sort there as well, which I outlined in the `ClientsController`.
 
