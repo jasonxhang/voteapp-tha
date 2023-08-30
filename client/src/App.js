@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Container, Row, Col, Button } from 'react-bootstrap'
-import { ClipLoader } from 'react-spinners'
+import { ClipLoader, PacmanLoader } from 'react-spinners'
 
 const App = () => {
   const [clients, setClients] = useState([])
-  console.log('clients:', clients)
   const [voteProcessing, setVoteProcessing] = useState({ clientId: null, inProgress: false })
+  const [pageLoading, setPageLoading] = useState(true)
 
   const fetchVoteCount = async (clientId) => {
     try {
@@ -32,13 +32,18 @@ const App = () => {
       const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
 
       setClients(sortedClients)
+      setPageLoading(false)
     } catch (error) {
       console.error('Error fetching clients:', error)
+      setPageLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchClients()
+    if (!pageLoading) return
+    if (!clients.length) {
+      fetchClients()
+    }
   }, [])
 
   const handleVote = async (clientId) => {
@@ -96,20 +101,28 @@ const App = () => {
   }
   return (
     <Container className="mt-5">
-      <h1 className="mb-4">Clients List</h1>
-      <Row className="mb-2">
-        <Col xs={4}>
-          <div>
-            <strong>Name</strong>
-          </div>
-        </Col>
-        <Col xs={4}>
-          <div>
-            <strong>Votes</strong>
-          </div>
-        </Col>
-      </Row>
-      {clients?.map((client) => renderClientRow(client))}
+      <h1 className="mb-4">All Time NBA Players</h1>
+      {pageLoading ? (
+        <div className="mt-auto d-flex justify-content-center">
+          <ClipLoader size={75} color={'#36d7b7'} />
+        </div>
+      ) : (
+        <>
+          <Row className="mb-2">
+            <Col xs={4}>
+              <div>
+                <strong>Name</strong>
+              </div>
+            </Col>
+            <Col xs={4}>
+              <div>
+                <strong>Votes</strong>
+              </div>
+            </Col>
+          </Row>
+          {clients?.map((client) => renderClientRow(client))}
+        </>
+      )}
     </Container>
   )
 }
