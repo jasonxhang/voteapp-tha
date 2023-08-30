@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import { ClipLoader } from 'react-spinners'
@@ -18,38 +18,47 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const getResponse = await axios.get('/clients')
-        const clientList = getResponse.data
-        const clientsWithVoteCounts = await Promise.all(
-          clientList.map(async (client) => {
-            const vote_count = await fetchVoteCount(client.id)
-            return { ...client, vote_count }
-          })
-        )
+  // useCallback in case we were to ever use fetchClients elsewhere in the future
+  const fetchClients = useCallback(async () => {
+    try {
+      // get all clients
+      const getResponse = await axios.get('/clients')
+      const clientList = getResponse.data
 
-        const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
+      // get vote count for each client
+      const clientsWithVoteCounts = await Promise.all(
+        clientList.map(async (client) => {
+          const vote_count = await fetchVoteCount(client.id)
+          return { ...client, vote_count }
+        })
+      )
 
-        setClients(sortedClients)
-        setPageLoading(false)
-      } catch (error) {
-        console.error('Error fetching clients:', error)
-        setPageLoading(false)
-      }
+      // sort clients by vote count descending
+      const sortedClients = clientsWithVoteCounts.sort((a, b) => b.vote_count - a.vote_count)
+
+      setClients(sortedClients)
+      setPageLoading(false)
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+      setPageLoading(false)
     }
-
-    fetchClients()
   }, [])
+
+  useEffect(() => {
+    fetchClients()
+  }, [fetchClients])
 
   const handleVote = async (clientId) => {
     try {
       setVoteProcessing({ clientId, inProgress: true })
 
+      // post vote
       await axios.post(`/votes/${clientId}`)
       const newVoteCount = await fetchVoteCount(clientId)
 
+      // update vote count for client and sort.
+      // NOTE: this operation can get expensive as the number of clients grows
+      // I would prefer to do this on the server side by attaching vote counts to the client object in our index call
       setClients((prevClients) =>
         prevClients
           .map((client) =>
