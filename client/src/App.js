@@ -106,6 +106,8 @@ const App = () => {
         <div className="mt-auto d-flex justify-content-center">
           <ClipLoader size={75} color={'#36d7b7'} />
         </div>
+      ) : clients.length === 0 ? (
+        <div>No players found.</div>
       ) : (
         <>
           <Row className="mb-2">

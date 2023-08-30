@@ -6,7 +6,6 @@ I will note that the current API implementation is not my favorite as it would n
 
 ![image](https://github.com/jasonxhang/voteapp-tha/assets/38513090/b98c092d-c953-491f-bb29-a1bcf6cea3aa)
 
-
 ## Getting Started
 
 #### Prerequisites
@@ -76,8 +75,10 @@ Vote for a client by clicking the "Vote" button.
 Observe real-time updates and reordering of the vote counts as users vote.
 
 #### To Do
+
 - more css styling
 - front end routing
+- tests
 - authentication
 - user creation of additional clients
 - separate biography pages for each client
