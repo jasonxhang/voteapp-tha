@@ -75,7 +75,7 @@ Browse the list of clients and their vote counts.
 Vote for a client by clicking the "Vote" button.
 Observe real-time updates and reordering of the vote counts as users vote.
 
-#### Future Potential Additions
+#### To Do
 - more css styling
 - front end routing
 - authentication
@@ -84,3 +84,4 @@ Observe real-time updates and reordering of the vote counts as users vote.
 - websockets
   - live notifications for votes
 - logging service
+- hosting
