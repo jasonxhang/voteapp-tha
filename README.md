@@ -4,7 +4,8 @@ Welcome to VoteApp! This application allows users to vote for different clients,
 
 I will note that the current API implementation is not my favorite as it would not scale well since we have to make individual calls for each client to use our `GET /votes/:client_id` route. An alternative proposal outlined in the `ClientsController` would be to attach `vote_counts` directly to the user object inside our `GET /clients` route and do any sorting there as well.
 
-![image](https://github.com/jasonxhang/perchwell-tha/assets/38513090/4d8ab708-7baf-4124-a0bb-2727a7052e84)
+![image](https://github.com/jasonxhang/voteapp-tha/assets/38513090/b98c092d-c953-491f-bb29-a1bcf6cea3aa)
+
 
 ## Getting Started
 
