@@ -52,7 +52,7 @@ Ensure you have the following installed on your machine:
    npm start
    ```
 
-6. Open web browser and visit `http://localhost:3002` to access the app.
+6. Open web browser and visit `http://localhost:3001` to access the app.
 
 #### Database Schema
 
